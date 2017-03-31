@@ -1,0 +1,18 @@
+[submodule "Modflags"]
+	path = Modflags
+	url = https://github.com/VoltzEngine-Project/Modflags.git
+[submodule "Prefabs"]
+	path = Prefabs
+	url = https://github.com/VoltzEngine-Project/Prefabs.git
+[submodule "API"]
+	path = API
+	url = https://github.com/VoltzEngine-Project/API.git
+[submodule "Engine"]
+	path = Engine
+	url = https://github.com/VoltzEngine-Project/Engine.git
+[submodule "ModCompat"]
+	path = ModCompat
+	url = https://github.com/VoltzEngine-Project/ModCompat.git
+[submodule "Lib-Access"]
+	path = Lib-Access
+	url = https://github.com/VoltzEngine-Project/Lib-Access.git
