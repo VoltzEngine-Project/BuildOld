@@ -19,3 +19,6 @@
 [submodule "BuiltBrokenScripts"]
 	path = BuiltBrokenScripts
 	url = https://github.com/BuiltBrokenModding/BuiltBrokenScripts.git
+[submodule "CodeGenerator"]
+	path = CodeGenerator
+	url = https://github.com/VoltzEngine-Project/CodeGenerator.git
