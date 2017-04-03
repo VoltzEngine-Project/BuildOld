@@ -16,3 +16,6 @@
 [submodule "Lib-Access"]
 	path = Lib-Access
 	url = https://github.com/VoltzEngine-Project/Lib-Access.git
+[submodule "BuiltBrokenScripts"]
+	path = BuiltBrokenScripts
+	url = https://github.com/BuiltBrokenModding/BuiltBrokenScripts.git
