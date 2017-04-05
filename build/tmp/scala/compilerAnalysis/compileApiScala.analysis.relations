@@ -1,0 +1,15 @@
+products:
+   F:\github\1.7\BuildOld\src\api\scala\appeng\api\implementations\items\IAEWrench.java -> F:\github\1.7\BuildOld\build\classes\api\appeng\api\implementations\items\IAEWrench.class
+   F:\github\1.7\BuildOld\src\api\scala\mekanism\api\IMekWrench.java -> F:\github\1.7\BuildOld\build\classes\api\mekanism\api\IMekWrench.class
+binary dependencies:
+   F:\github\1.7\BuildOld\src\api\scala\appeng\api\implementations\items\IAEWrench.java -> C:\Program Files\Java\jdk1.8.0_121\jre\lib\rt.jar
+   F:\github\1.7\BuildOld\src\api\scala\appeng\api\implementations\items\IAEWrench.java -> F:\github\1.7\BuildOld\build\dirtyArtifacts\forgeBin-1.7.10-10.13.4.1614-1.7.10.jar
+   F:\github\1.7\BuildOld\src\api\scala\mekanism\api\IMekWrench.java -> C:\Program Files\Java\jdk1.8.0_121\jre\lib\rt.jar
+   F:\github\1.7\BuildOld\src\api\scala\mekanism\api\IMekWrench.java -> F:\github\1.7\BuildOld\build\dirtyArtifacts\forgeBin-1.7.10-10.13.4.1614-1.7.10.jar
+source dependencies:
+   F:\github\1.7\BuildOld\src\api\scala\appeng\api\implementations\items\IAEWrench.java -> F:\github\1.7\BuildOld\src\api\scala\appeng\api\implementations\items\IAEWrench.java
+   F:\github\1.7\BuildOld\src\api\scala\mekanism\api\IMekWrench.java -> F:\github\1.7\BuildOld\src\api\scala\mekanism\api\IMekWrench.java
+external dependencies:
+class names:
+   F:\github\1.7\BuildOld\src\api\scala\appeng\api\implementations\items\IAEWrench.java -> appeng.api.implementations.items.IAEWrench
+   F:\github\1.7\BuildOld\src\api\scala\mekanism\api\IMekWrench.java -> mekanism.api.IMekWrench
