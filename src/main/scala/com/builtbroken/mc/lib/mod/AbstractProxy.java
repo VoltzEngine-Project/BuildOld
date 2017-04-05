@@ -1,6 +1,6 @@
 package com.builtbroken.mc.lib.mod;
 
-import com.builtbroken.mc.api.tile.IGuiTile;
+import com.builtbroken.mc.api.tile.access.IGuiTile;
 import com.builtbroken.mc.lib.mod.loadable.AbstractLoadable;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -105,5 +105,13 @@ public abstract class AbstractProxy extends AbstractLoadable implements IGuiHand
     public boolean isShiftHeld()
     {
         return Keyboard.isKeyDown(Keyboard.KEY_RSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
+    }
+
+    /**
+     * Called to register {@link com.builtbroken.mc.api.tile.listeners.ITileEventListenerBuilder}s
+     */
+    public void registerListeners()
+    {
+
     }
 }
