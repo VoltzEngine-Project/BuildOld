@@ -57,9 +57,25 @@ public class TestJsonLoader extends AbstractTest
         //Test everything that runs in the pre int method
         assertEquals("json", loader.externalContentFolder.getName());
         assertEquals("file", loader.externalContentFolder.getParentFile().getName());
-        assertEquals(1, loader.processors.size());
+
+        //Check number of processors loaded
+        assertEquals(7, loader.processors.size());
+
+        //Check block is loaded, and its sub processors are loaded
         assertSame(loader.blockProcessor, loader.processors.get("block"));
-        assertEquals(2, loader.blockProcessor.subProcessors.size());
+        assertEquals(6, loader.blockProcessor.subProcessors.size());
+        assertSame(loader.craftingRecipeProcessor, loader.blockProcessor.subProcessors.get("craftingGridRecipe"));
+        assertSame(loader.furnaceRecipeProcessor, loader.blockProcessor.subProcessors.get("furnaceRecipe"));
+        assertSame(loader.worldOreGenProcessor, loader.blockProcessor.subProcessors.get("worldGenerator"));
+
+        //Check that item is loaded
+        assertSame(loader.itemProcessor, loader.processors.get("item"));
+
+        //Check that crafting is loaded
+        assertSame(loader.craftingRecipeProcessor, loader.processors.get("craftingGridRecipe"));
+
+        //Check that furnace is loaded
+        assertSame(loader.furnaceRecipeProcessor, loader.processors.get("furnaceRecipe"));
 
         //Call init and setup data it needs
         loader.add(new FakeProcessor("ammo", "after:ammoType"));
@@ -81,7 +97,9 @@ public class TestJsonLoader extends AbstractTest
 
         loader.init();
         //TODO test that all files loaded correctly
-        assertEquals(21, loader.generatedObjects.size());
+        assertEquals(13, loader.generatedObjects.get("ammo").size());
+        assertEquals(5, loader.generatedObjects.get("ammoType").size());
+        assertEquals(3, loader.generatedObjects.get("clip").size());
         assertEquals(0, loader.jsonEntries.size());
         assertEquals(0, loader.externalFiles.size());
         assertEquals(0, loader.classPathResources.size());

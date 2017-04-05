@@ -1,7 +1,7 @@
 package com.builtbroken.mc.prefab.gui.components;
 
 import com.builtbroken.jlib.data.Colors;
-import com.builtbroken.mc.lib.transform.vector.Point;
+import com.builtbroken.mc.imp.transform.vector.Point;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 

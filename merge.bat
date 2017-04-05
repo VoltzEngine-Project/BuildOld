@@ -4,7 +4,7 @@ set FILE_LIST=(API Engine Lib-Access ModCompat Modflags Prefabs)
 
 RMDIR /S /Q src
 
-git submodule update --recursive --remote
+git submodule update
 
 for %%i in %FILE_LIST% do (
 	cd %ROOT_FILE%\%%i

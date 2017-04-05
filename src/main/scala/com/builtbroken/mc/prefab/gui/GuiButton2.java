@@ -1,6 +1,6 @@
 package com.builtbroken.mc.prefab.gui;
 
-import com.builtbroken.mc.lib.transform.vector.Point;
+import com.builtbroken.mc.imp.transform.vector.Point;
 import net.minecraft.client.gui.GuiButton;
 
 /**

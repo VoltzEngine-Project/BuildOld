@@ -10,8 +10,8 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import com.builtbroken.mc.api.tile.IExtendedStorage;
-import com.builtbroken.mc.lib.transform.vector.Pos;
-import com.builtbroken.mc.lib.transform.vector.Location;
+import com.builtbroken.mc.imp.transform.vector.Pos;
+import com.builtbroken.mc.imp.transform.vector.Location;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -5,7 +5,7 @@ import com.builtbroken.mc.api.rails.ITransportRail;
 import com.builtbroken.mc.api.rails.ITransportRailBlock;
 import com.builtbroken.mc.core.network.IPacketIDReceiver;
 import com.builtbroken.mc.lib.helper.MathUtility;
-import com.builtbroken.mc.lib.transform.vector.Pos;
+import com.builtbroken.mc.imp.transform.vector.Pos;
 import com.builtbroken.mc.prefab.entity.EntityBase;
 import com.builtbroken.mc.prefab.inventory.InventoryUtility;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
@@ -30,7 +30,7 @@ import java.util.List;
  * @see <a href="https://github.com/BuiltBrokenModding/VoltzEngine/blob/development/license.md">License</a> for what you can and can't do with the code.
  * Created by Dark(DarkGuardsman, Robert) on 10/29/2016.
  */
-public abstract class EntityAbstractCart extends EntityBase implements IPacketIDReceiver, IEntityAdditionalSpawnData, ITransportCart
+public class EntityAbstractCart extends EntityBase implements IPacketIDReceiver, IEntityAdditionalSpawnData, ITransportCart
 {
     /** Speed the cart wants to be pushed at */
     public static final float PUSH_SPEED = 0.05f;
@@ -105,10 +105,9 @@ public abstract class EntityAbstractCart extends EntityBase implements IPacketID
     }
 
     @Override
-    public void setRotation(float yaw, float pitch)
+    public void setCartRotation(float yaw, float pitch)
     {
-        this.rotationYaw = yaw % 360.0F;
-        this.rotationPitch = pitch % 360.0F;
+        super.setRotation(yaw, pitch);
         invalidBox = true;
 
         float yaw2 = (float) MathUtility.clampAngleTo180(this.rotationYaw);
@@ -125,6 +124,7 @@ public abstract class EntityAbstractCart extends EntityBase implements IPacketID
             facingDirection = ForgeDirection.EAST;
         }
         else if (yaw2 >= -135 && yaw2 <= -45)
+
         {
             facingDirection = ForgeDirection.WEST;
         }
@@ -320,7 +320,7 @@ public abstract class EntityAbstractCart extends EntityBase implements IPacketID
     }
 
     @Override
-    public void setMotion(double x, double y, double z)
+    public void setCartMotion(double x, double y, double z)
     {
         this.motionX = x;
         this.motionY = y;
@@ -366,7 +366,10 @@ public abstract class EntityAbstractCart extends EntityBase implements IPacketID
         setDead();
     }
 
-    public abstract ItemStack toStack();
+    public ItemStack toStack()
+    {
+        return null;
+    }
 
     @Override
     public void onEntityUpdate()

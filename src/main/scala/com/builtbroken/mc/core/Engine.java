@@ -34,26 +34,26 @@ import com.builtbroken.mc.core.handler.TileTaskTickHandler;
 import com.builtbroken.mc.core.network.netty.PacketManager;
 import com.builtbroken.mc.core.registry.MassRegistry;
 import com.builtbroken.mc.core.registry.ModManager;
+import com.builtbroken.mc.framework.multiblock.BlockMultiblock;
+import com.builtbroken.mc.framework.multiblock.EnumMultiblock;
+import com.builtbroken.mc.framework.multiblock.ItemBlockMulti;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
 import com.builtbroken.mc.lib.helper.PotionUtility;
 import com.builtbroken.mc.lib.helper.recipe.OreNames;
 import com.builtbroken.mc.lib.json.JsonContentLoader;
+import com.builtbroken.mc.lib.json.processors.block.JsonBlockListenerProcessor;
 import com.builtbroken.mc.lib.mod.AbstractProxy;
-import com.builtbroken.mc.lib.mod.compat.Mods;
-import com.builtbroken.mc.lib.mod.compat.ae.AEProxy;
-import com.builtbroken.mc.lib.mod.compat.bc.BCProxy;
-import com.builtbroken.mc.lib.mod.compat.ic.ICProxy;
-import com.builtbroken.mc.lib.mod.compat.mek.MekProxy;
-import com.builtbroken.mc.lib.mod.compat.nei.NEIProxy;
-import com.builtbroken.mc.lib.mod.compat.oc.OCProxy;
-import com.builtbroken.mc.lib.mod.compat.pe.ProjectEProxy;
-import com.builtbroken.mc.lib.mod.compat.rf.RFLoader;
-import com.builtbroken.mc.lib.mod.compat.te.TEProxy;
-import com.builtbroken.mc.lib.mod.compat.tinkers.TinkerProxy;
-import com.builtbroken.mc.lib.mod.compat.ue.TileUniversalBattery;
+import com.builtbroken.mc.lib.mod.Mods;
 import com.builtbroken.mc.lib.mod.config.ConfigHandler;
 import com.builtbroken.mc.lib.mod.config.ConfigScanner;
 import com.builtbroken.mc.lib.mod.loadable.LoadableHandler;
+import com.builtbroken.mc.lib.recipe.cast.MRHandlerCast;
+import com.builtbroken.mc.lib.recipe.fluid.MRHandlerFluidStack;
+import com.builtbroken.mc.lib.recipe.item.MRHandlerItemStack;
+import com.builtbroken.mc.lib.recipe.item.MRSmelterHandler;
+import com.builtbroken.mc.lib.recipe.item.RecipeTool;
+import com.builtbroken.mc.lib.recipe.item.grid.RecipeShapedOreLarge;
+import com.builtbroken.mc.lib.recipe.item.sheetmetal.RecipeSheetMetal;
 import com.builtbroken.mc.lib.world.edit.PlacementData;
 import com.builtbroken.mc.lib.world.edit.thread.WorkerThread;
 import com.builtbroken.mc.lib.world.edit.thread.WorldActionQue;
@@ -61,17 +61,20 @@ import com.builtbroken.mc.lib.world.explosive.ExplosiveRegistry;
 import com.builtbroken.mc.lib.world.heat.HeatedBlockRegistry;
 import com.builtbroken.mc.lib.world.radar.RadarRegistry;
 import com.builtbroken.mc.lib.world.radio.RadioRegistry;
+import com.builtbroken.mc.mods.ae.AEProxy;
+import com.builtbroken.mc.mods.bc.BCProxy;
+import com.builtbroken.mc.mods.ic.ICProxy;
+import com.builtbroken.mc.mods.mek.MekProxy;
+import com.builtbroken.mc.mods.nei.NEIProxy;
+import com.builtbroken.mc.mods.oc.OCProxy;
+import com.builtbroken.mc.mods.pe.ProjectEProxy;
+import com.builtbroken.mc.mods.rf.RFLoader;
+import com.builtbroken.mc.mods.te.TEProxy;
+import com.builtbroken.mc.mods.tinkers.TinkerProxy;
+import com.builtbroken.mc.mods.ue.TileUniversalBattery;
 import com.builtbroken.mc.prefab.explosive.handler.ExplosiveHandlerTNT;
-import com.builtbroken.mc.prefab.recipe.cast.MRHandlerCast;
-import com.builtbroken.mc.prefab.recipe.fluid.MRHandlerFluidStack;
-import com.builtbroken.mc.prefab.recipe.item.MRHandlerItemStack;
-import com.builtbroken.mc.prefab.recipe.item.MRSmelterHandler;
-import com.builtbroken.mc.prefab.recipe.item.RecipeTool;
-import com.builtbroken.mc.prefab.recipe.item.sheetmetal.RecipeSheetMetal;
 import com.builtbroken.mc.prefab.tile.item.ItemBlockMetadata;
-import com.builtbroken.mc.prefab.tile.multiblock.BlockMultiblock;
-import com.builtbroken.mc.prefab.tile.multiblock.EnumMultiblock;
-import com.builtbroken.mc.prefab.tile.multiblock.ItemBlockMulti;
+import com.builtbroken.mc.prefab.tile.listeners.RotatableListener;
 import com.builtbroken.mc.prefab.trigger.TriggerNBTBuilder;
 import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -122,7 +125,7 @@ public class Engine
     @Instance(References.ID)
     public static Engine instance;
 
-    public LoadableHandler loader;
+    public static LoadableHandler loader = new LoadableHandler();
     public ModManager manager;
     protected static Logger logger = LogManager.getLogger("VoltzEngine");
     private Configuration config;
@@ -313,6 +316,23 @@ public class Engine
         sheetMetalRequested = true;
     }
 
+    /**
+     * Requests that the main modules be loaded
+     */
+    public static void requestBaseModules()
+    {
+        if (!Loader.instance().isInState(LoaderState.PREINITIALIZATION))
+        {
+            throw new RuntimeException("Modules can only be requested to load in the pre-init phase");
+        }
+        requestOres();
+        requestResources();
+        requestCraftingParts();
+        requestCircuits();
+        requestSimpleTools();
+        requestSheetMetalContent();
+    }
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
@@ -329,7 +349,6 @@ public class Engine
         heatDataConfig = new Configuration(new File(event.getModConfigurationDirectory(), "bbm/ve/HeatMap.cfg"));
         explosiveConfig = new Configuration(new File(event.getModConfigurationDirectory(), "bbm/ve/Explosives.cfg"));
 
-        loader = new LoadableHandler();
         manager = new ModManager().setPrefix(References.DOMAIN).setTab(CreativeTabs.tabAllSearch);
 
         config.load();
@@ -371,6 +390,7 @@ public class Engine
 
         RecipeSorter.register(References.PREFIX + "sheetMetalTools", RecipeSheetMetal.class, SHAPED, "after:minecraft:shaped");
         RecipeSorter.register(References.PREFIX + "Tools", RecipeTool.class, SHAPED, "after:minecraft:shaped");
+        RecipeSorter.register(References.PREFIX + "shapedLarge", RecipeShapedOreLarge.class, SHAPED, "after:minecraft:shaped");
 
         //Internal systems
         if (config.getBoolean("ASMTestingEnabled", "Internal", true, "Enables the testing of the internally used ASM code, used to ensure quality of the game. Only disable if you know the ASM is functional or there are issues with it running. Normally though if the ASM test fails then the ASM code itself was not injected. Which will result in several features of the mod not functioning correctly."))
@@ -461,6 +481,7 @@ public class Engine
         ToolMode.REGISTRY.add(new ToolModeGeneral());
         ToolMode.REGISTRY.add(new ToolModeRotation());
 
+        registerListeners();
 
         /**
          * Multiblock Handling
@@ -500,13 +521,18 @@ public class Engine
         OreDictionary.registerOre(OreNames.STRING, Items.string);
         OreDictionary.registerOre(OreNames.FLINT, Items.flint);
 
-
         Calendar calendar = Calendar.getInstance();
 
         if (calendar.get(2) + 1 == 12 && calendar.get(5) >= 24 && calendar.get(5) <= 26)
         {
             XMAS = true;
         }
+    }
+
+    protected void registerListeners()
+    {
+        JsonBlockListenerProcessor.addBuilder(new RotatableListener.Builder());
+        proxy.registerListeners();
     }
 
     @EventHandler
@@ -691,7 +717,10 @@ public class Engine
     public void loadCompleteEvent(FMLLoadCompleteEvent event)
     {
         //Clean up resources to free up ram
+        loader.loadComplete();
+
         JsonContentLoader.INSTANCE.clear();
+        //TODO clear load handler
     }
 
     public AbstractProxy getProxy()

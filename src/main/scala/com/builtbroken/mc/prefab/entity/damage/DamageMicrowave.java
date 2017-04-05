@@ -1,6 +1,6 @@
 package com.builtbroken.mc.prefab.entity.damage;
 
-import com.builtbroken.mc.lib.transform.vector.Location;
+import com.builtbroken.mc.imp.transform.vector.Location;
 import com.builtbroken.mc.prefab.AbstractDamageSource;
 
 /**

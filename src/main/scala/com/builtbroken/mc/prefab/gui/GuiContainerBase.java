@@ -7,8 +7,8 @@ import com.builtbroken.mc.client.SharedAssets;
 import com.builtbroken.mc.core.Engine;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
 import com.builtbroken.mc.lib.render.RenderUtility;
-import com.builtbroken.mc.lib.transform.region.Rectangle;
-import com.builtbroken.mc.lib.transform.vector.Point;
+import com.builtbroken.mc.imp.transform.region.Rectangle;
+import com.builtbroken.mc.imp.transform.vector.Point;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -46,6 +46,9 @@ public class GuiContainerBase extends GuiContainer
     protected int containerWidth;
     protected int containerHeight;
     private float lastChangeFrameTime;
+
+    /** Debug toogle to render text for the ID and inventory ID for a slot */
+    public boolean renderSlotDebugIDs = false;
 
     public GuiContainerBase(Container container)
     {
@@ -170,18 +173,26 @@ public class GuiContainerBase extends GuiContainer
     @Override
     protected void keyTyped(char c, int id)
     {
-        boolean f = false;
-        for (GuiTextField field : fields)
+        //Key for debug render
+        if (id == Keyboard.KEY_INSERT)
         {
-            field.textboxKeyTyped(c, id);
-            if (field.isFocused())
-            {
-                return;
-            }
+            renderSlotDebugIDs = !renderSlotDebugIDs;
         }
-        if (!f)
+        else
         {
-            super.keyTyped(c, id);
+            boolean f = false;
+            for (GuiTextField field : fields)
+            {
+                field.textboxKeyTyped(c, id);
+                if (field.isFocused())
+                {
+                    return;
+                }
+            }
+            if (!f)
+            {
+                super.keyTyped(c, id);
+            }
         }
     }
 
@@ -286,7 +297,7 @@ public class GuiContainerBase extends GuiContainer
     protected void drawSlot(Slot slot)
     {
         drawSlot(slot.xDisplayPosition - 1, slot.yDisplayPosition - 1); //TODO get slot type from slot
-        if (Engine.runningAsDev)
+        if (Engine.runningAsDev && renderSlotDebugIDs)
         {
             this.drawStringCentered("" + slot.getSlotIndex(), guiLeft + slot.xDisplayPosition + 9, guiTop + slot.yDisplayPosition + 9, Color.YELLOW);
             this.drawStringCentered("" + slot.slotNumber, guiLeft + slot.xDisplayPosition + 9, guiTop + slot.yDisplayPosition + 1, Color.RED);
@@ -424,7 +435,7 @@ public class GuiContainerBase extends GuiContainer
      */
     protected void drawRectWithScaledWidth(int x, int y, int u, int v, int width, int height, int newWidth)
     {
-        if(width > 0)
+        if (width > 0)
         {
             //If both widths are the same redirect to original call
             if (newWidth <= 0 || width == newWidth)
@@ -460,7 +471,7 @@ public class GuiContainerBase extends GuiContainer
                 }
             }
 
-            if(width > 3)
+            if (width > 3)
             {
                 //End cap of image rect
                 drawTexturedModalRect(x, y, u + width - 3, v, 3, height);

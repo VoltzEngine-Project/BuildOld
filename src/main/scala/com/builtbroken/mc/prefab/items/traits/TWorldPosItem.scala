@@ -2,7 +2,7 @@ package com.builtbroken.mc.prefab.items.traits
 
 import com.builtbroken.mc.api.IWorldPosition
 import com.builtbroken.mc.api.items.tools.IWorldPosItem
-import com.builtbroken.mc.lib.transform.vector.Location
+import com.builtbroken.mc.imp.transform.vector.Location
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 
