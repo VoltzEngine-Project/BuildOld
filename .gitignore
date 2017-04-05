@@ -1,0 +1,10 @@
+.gradle/
+build/
+VoltzEngine.txt
+output/
+whitelist.json
+CompiledWith.txt
+banned-ips.json
+banned-players.json
+logs/latest.log
+ops.json
