@@ -40,6 +40,7 @@ import com.builtbroken.mc.framework.multiblock.ItemBlockMulti;
 import com.builtbroken.mc.lib.helper.LanguageUtility;
 import com.builtbroken.mc.lib.helper.PotionUtility;
 import com.builtbroken.mc.lib.helper.recipe.OreNames;
+import com.builtbroken.mc.lib.json.IJsonGenMod;
 import com.builtbroken.mc.lib.json.JsonContentLoader;
 import com.builtbroken.mc.lib.json.processors.block.JsonBlockListenerProcessor;
 import com.builtbroken.mc.lib.mod.AbstractProxy;
@@ -111,7 +112,7 @@ import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
  */
 
 @Mod(modid = References.ID, name = References.NAME, version = References.VERSION, acceptableRemoteVersions = "*", dependencies = "required-after:Forge;after:TConstruct")
-public class Engine
+public class Engine implements IJsonGenMod
 {
     public static final ModManager contentRegistry = new ModManager().setPrefix(References.PREFIX).setTab(CreativeTabs.tabTools);
     public static final boolean runningAsDev = System.getProperty("development") != null && System.getProperty("development").equalsIgnoreCase("true");
@@ -516,7 +517,12 @@ public class Engine
         //Creeper skull
         ExplosiveRegistry.registerExplosiveItem(new ItemStack(Items.skull, 1, 4), ExplosiveRegistry.get("TNT"), tntValue / 10.0);
 
+        //Call loader
         loader.preInit();
+        //Claim json content
+        JsonContentLoader.INSTANCE.claimContent(this);
+
+        //Ore dictionary registry
         OreDictionary.registerOre(OreNames.WOOD_STICK, Items.stick);
         OreDictionary.registerOre(OreNames.STRING, Items.string);
         OreDictionary.registerOre(OreNames.FLINT, Items.flint);
@@ -557,14 +563,14 @@ public class Engine
         //Late registration of content
         if ((getConfig().hasKey("Content", "LoadOres") || metallicOresRequested) && getConfig().getBoolean("LoadOres", "Content", metallicOresRequested, "Loads up ore blocks and generators. Ore Generation can be disable separate if you want to keep the block for legacy purposes."))
         {
-            ore = contentRegistry.newBlock(References.ID + "StoneOre", new BlockOre("stone"), ItemBlockOre.class);
+            ore = contentRegistry.newBlock("veStoneOre", new BlockOre("stone"), ItemBlockOre.class);
             ore.setHardness(1.5F).setResistance(10.0F).setStepSound(Block.soundTypeStone);
             MetallicOres.registerSet(ore, getConfig());
         }
 
         if ((getConfig().hasKey("Content", "LoadGemOres") || gemOresRequested) && getConfig().getBoolean("LoadGemOres", "Content", gemOresRequested, "Loads up Gem Ores."))
         {
-            gemOre = contentRegistry.newBlock(References.ID + "GemOre", new BlockGemOre("stone"), ItemBlockGemOre.class);
+            gemOre = contentRegistry.newBlock("veGemOre", new BlockGemOre("stone"), ItemBlockGemOre.class);
             GemOres.registerSet(gemOre, getConfig());
         }
 
@@ -733,6 +739,18 @@ public class Engine
         return config;
     }
 
+    @Override
+    public String getPrefix()
+    {
+        return References.PREFIX;
+    }
+
+    @Override
+    public String getDomain()
+    {
+        return References.DOMAIN;
+    }
+
     public ModManager getManager()
     {
         return this.manager;
@@ -842,5 +860,36 @@ public class Engine
             }
         }
         return false;
+    }
+
+    @Mod.EventHandler
+    public void missingMappingEvent(FMLMissingMappingsEvent event)
+    {
+        for (FMLMissingMappingsEvent.MissingMapping missingMapping : event.getAll())
+        {
+            final String name = missingMapping.name;
+            if (name.startsWith("VoltzEngine:"))
+            {
+                String registryKey = name.split(":")[1];
+                Object object = missingMapping.type.getRegistry().getObject("voltzengine:" + registryKey);
+                if (object == Blocks.air || object == null)
+                {
+                    registryKey = registryKey.replace("VoltzEngine", "ve");
+                    object = missingMapping.type.getRegistry().getObject("voltzengine:" + registryKey);
+                }
+
+                if (object != Blocks.air && object != null)
+                {
+                    if (object instanceof Block)
+                    {
+                        missingMapping.remap((Block) object);
+                    }
+                    else if (object instanceof Item)
+                    {
+                        missingMapping.remap((Item) object);
+                    }
+                }
+            }
+        }
     }
 }
