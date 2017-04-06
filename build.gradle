@@ -53,6 +53,32 @@ println "Current Java version = " + currentJvm
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+task CopyTask(type: Copy) {
+    mustRunAfter 'clean'
+    from 'API/src/main/scala'
+    from 'CodeGenerator/src/main/java'
+    from 'Engine/src/main/scala'
+    from 'Lib-Access/src/main/scala'
+    from 'Modflags/src/main/scala'
+    from 'Prefabs/src/main/scala'
+    into 'src/main/scala'
+}
+
+task copyMethodWithExplicitDependencies{
+    // up-to-date check for inputs, plus add copyTask as dependency
+    inputs.file CopyTask
+    outputs.dir 'some-dir' // up-to-date check for outputs
+    doLast{
+        copy {
+            // Copy the output of copyTask
+            from CopyTask
+            into 'src/main/scala'
+        }
+    }
+}
+
+tasks.downloadClient.dependsOn copyMethodWithExplicitDependencies
+
 lombok {
     // optional: values below are the defaults
     version = "1.16.4"
