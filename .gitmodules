@@ -10,6 +10,7 @@
 [submodule "Engine"]
 	path = Engine
 	url = https://github.com/VoltzEngine-Project/Engine.git
+	branch = development
 [submodule "ModCompat"]
 	path = ModCompat
 	url = https://github.com/VoltzEngine-Project/ModCompat.git
